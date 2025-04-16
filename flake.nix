@@ -1,5 +1,5 @@
 {
-  description = "Environnement de dev Arduino pour 3pi+ 32U4 avec PlatformIO et Zed";
+  description = "Environnement de dev Arduino avec PlatformIO, Zed et Pololu 3pi+";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -22,28 +22,30 @@
           ];
 
           shellHook = ''
-              echo "📦 Environnement Arduino prêt avec PlatformIO, Zed, et projet Pololu32U4"
-  
-              if [ ! -f "platformio.ini" ]; then
-                echo "🛠️  Initialisation du projet PlatformIO (a-star32U4)..."
-                pio project init --board a-star32U4
-              else
-                echo "✅ Projet PlatformIO déjà initialisé."
-              fi
+            echo "📦 Environnement Arduino prêt avec PlatformIO, Zed, et AVR toolchain"
 
+            if [ ! -f "platformio.ini" ]; then
+              echo "🛠️  Initialisation du projet PlatformIO (a-star32U4)..."
+              pio project init --board a-star32U4
 
+              echo "📚 Ajout de la dépendance Pololu3piPlus32U4..."
+              echo "" >> platformio.ini
+              echo "lib_deps = " >> platformio.ini
+              echo "  Pololu3piPlus32U4@^1.1.3" >> platformio.ini
 
-              if command -v zeditor &> /dev/null; then
-                echo "🚀 Lancement de Zed..."
-                zeditor .
-              else
-                echo "⚠️ Zed n'est pas installé ou non disponible dans le PATH"
-              fi
+              echo "🔁 Mise à jour du projet PlatformIO..."
+              pio init --environment a-star32U4
+            else
+              echo "✅ Projet PlatformIO déjà initialisé."
+            fi
 
-              
-'';
-
+            if command -v zeditor &> /dev/null; then
+              echo "🚀 Lancement de Zed..."
+              zeditor .
+            else
+              echo "⚠️ Zed n'est pas installé ou non disponible dans le PATH"
+            fi
+          '';
         };
       });
 }
-
